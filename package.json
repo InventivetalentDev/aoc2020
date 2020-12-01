@@ -1,0 +1,17 @@
+{
+  "name": "aoc2020",
+  "version": "1.0.0",
+  "description": "Advent of Code 2020",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Haylee Schäfer",
+  "license": "MIT",
+  "dependencies": {
+    "advent-of-code": "^5.0.0"
+  },
+  "adventConfig": {
+    "year": "2020"
+  }
+}
