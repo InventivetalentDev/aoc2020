@@ -1,17 +1,17 @@
 module.exports = {
     getLines: function (input) {
-        return input.split("\n");
+        return input.split(/\r?\n/);
     },
-    getEmptyLineSeparatedEntries: function (input) {
+    getEmptyLineSeparatedEntries: function (input, newlineSeparator = " ") {
         let lines = this.getLines(input);
         let entries = [];
         let curr = "";
         for (let line of lines) {
-            if (line.length <= 1) {
+            if (line.length < 1) {
                 entries.push(curr);
                 curr = "";
             } else {
-                curr += " " + line;
+                curr += newlineSeparator + line;
             }
         }
         entries.push(curr); // make sure to include the very last one
