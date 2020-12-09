@@ -17,10 +17,17 @@ module.exports = {
         entries.push(curr); // make sure to include the very last one
         return entries;
     },
+    sumArray: function (arr) {
+        let s = 0;
+        for (let a of arr) {
+            s += parseInt(a);
+        }
+        return s;
+    },
     multiplyArray: function (arr) {
         let m = 1;
         for (let a of arr) {
-            m *= a;
+            m *= parseInt(a);
         }
         return m;
     },
@@ -35,5 +42,9 @@ module.exports = {
     stripNewLine: function (str) {
         // https://stackoverflow.com/a/10805198
         return str.replace(/(\r\n|\n|\r)/gm, "")
+    },
+    mapParseInt: function (a) {
+        // https://medium.com/dailyjs/parseint-mystery-7c4368ef7b21
+        return parseInt(a);
     }
 }
