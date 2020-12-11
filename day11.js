@@ -37,20 +37,56 @@ const part1 = input => {
         changesLastCycle = 0;
     }
     console.log(originalLines);
-    let occupied = 0;
-    for (let y = 0; y < originalLines.length; y++) {
-        for (let x = 0; x < originalLines.length; x++) {
-            if (getSeat(originalLines, x, y) === "#") occupied++;
-        }
-    }
-    return occupied;
+    return countOccupied(originalLines);
 }
 
 // Part 2
 // ======
 
 const part2 = input => {
-    return input
+    let originalLines = util.getLines(input);
+    let changesLastCycle = 1;
+    while (true) {
+        // make a copy since we want to change everything at once without affecting decisions in the current cycle
+        let iteratorLines = JSON.parse(JSON.stringify(originalLines));
+        for (let y = 0; y < iteratorLines.length; y++) {
+            for (let x = 0; x < iteratorLines.length; x++) {
+                let seat = getSeat(iteratorLines, x, y);
+                if (seat === ".") continue;
+                let occupiedVisible = 0;
+                forEachFirstInAllDirections(iteratorLines, x, y, visibleSeat => {
+                    if (visibleSeat === "#") {
+                        occupiedVisible++;
+                    }
+                });
+                // make changes to original
+                if (seat === "L" && occupiedVisible <= 0) {
+                    setSeat(originalLines, x, y, "#");
+                    changesLastCycle++;
+                }
+                if (seat === "#" && occupiedVisible >= 5) {
+                    setSeat(originalLines, x, y, "L");
+                    changesLastCycle++;
+                }
+            }
+        }
+        if (changesLastCycle <= 0) {
+            break;
+        }
+        changesLastCycle = 0;
+    }
+    console.log(originalLines);
+    return countOccupied(originalLines);
+}
+
+function countOccupied(lines) {
+    let occupied = 0;
+    for (let y = 0; y < lines.length; y++) {
+        for (let x = 0; x < lines.length; x++) {
+            if (getSeat(lines, x, y) === "#") occupied++;
+        }
+    }
+    return occupied;
 }
 
 function getWidthHeight(lines) {
@@ -94,6 +130,35 @@ function forEachAdjacent(lines, x, y, cb) {
         let sy = y + ap[1];
         if (sx < 0 || sy < 0 || sx >= width || sy >= height) continue;
         cb(getSeat(lines, sx, sy), sx, sy);
+    }
+}
+
+function forEachFirstInAllDirections(lines, x, y, cb) {
+    const {width, height} = getWidthHeight(lines);
+    const directions = [
+        [0, -1], // up
+        [1, -1], // right up
+        [1, 0], // right
+        [1, 1], // right down
+        [0, 1], // down
+        [-1, 1], // left down
+        [-1, 0], // left
+        [-1, -1] // left up
+    ];
+
+    for (let dir of directions) {
+        let sx = x;
+        let sy = y;
+        for (let step = 0; step < (width * height); step++) {
+            sx += dir[0];
+            sy += dir[1];
+            if (sx < 0 || sy < 0 || sx >= width || sy >= height) break;
+            let seat = getSeat(lines, sx, sy);
+            if (seat !== ".") { // first seat they see
+                cb(seat, sx, sy);
+                break;
+            }
+        }
     }
 }
 
