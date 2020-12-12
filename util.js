@@ -46,5 +46,9 @@ module.exports = {
     mapParseInt: function (a) {
         // https://medium.com/dailyjs/parseint-mystery-7c4368ef7b21
         return parseInt(a);
+    },
+    mod: function (v, n) {
+        // https://stackoverflow.com/a/4467559
+        return ((v % n) + n) % n;
     }
 }
