@@ -20,7 +20,9 @@ module.exports = {
     sumArray: function (arr) {
         let s = 0;
         for (let a of arr) {
-            s += parseInt(a);
+            let p = parseInt(a);
+            if (isNaN(p)) continue;
+            s += p;
         }
         return s;
     },
@@ -50,5 +52,9 @@ module.exports = {
     mod: function (v, n) {
         // https://stackoverflow.com/a/4467559
         return ((v % n) + n) % n;
+    },
+    setChar: function (str, p, ch) {
+        // https://stackoverflow.com/a/1431110
+        return str.substring(0, p) + ch + str.substring(p + 1);
     }
 }

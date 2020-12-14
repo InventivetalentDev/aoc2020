@@ -105,7 +105,7 @@ function setSeat(lines, x, y, v) {
     // https://stackoverflow.com/a/1431110
     let line = lines[y];
     if (!line) return;
-    line = line.substring(0, x) + v + line.substring(x + 1);
+    line = util.setChar(line, x, v);
     lines[y] = line;
 }
 
