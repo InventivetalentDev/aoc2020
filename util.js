@@ -18,13 +18,7 @@ module.exports = {
         return entries;
     },
     sumArray: function (arr) {
-        let s = 0;
-        for (let a of arr) {
-            let p = parseInt(a);
-            if (isNaN(p)) continue;
-            s += p;
-        }
-        return s;
+        return arr.reduce((acc, val) => acc += val, 0);
     },
     multiplyArray: function (arr) {
         let m = 1;
