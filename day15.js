@@ -14,6 +14,7 @@ const part1 = input => {
 
 const part2 = input => {
     // This is gonna take a while lol
+    // https://github.com/rlakenvelt/aoc2020/blob/main/day15/day15b.js was way faster
     return run(input.split(",").map(util.mapParseInt), 30000000, false);
 }
 
