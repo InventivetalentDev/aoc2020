@@ -9,62 +9,32 @@ const NORTH = -1;
 const EAST = 1;
 const WEST = -1;
 
-const shift = [
-    [0, 0, UP], // up
-    [0, 0, DOWN], // down
-
-    [EAST, 0, UP], // up, east
-    [0, SOUTH, UP], // up, south
-    [WEST, 0, UP], // up, west
-    [0, NORTH, UP], // up, north
-
-    [EAST, SOUTH, UP], // up, south east
-    [WEST, SOUTH, UP], // up, south west
-    [EAST, NORTH, UP], // up, north east
-    [WEST, NORTH, UP], // up, north west
-
-    [0, NORTH, 0], // north
-    [0, SOUTH, 0], // south
-    [WEST, 0, 0], // west
-    [EAST, 0, 0], // east
-
-    [EAST, SOUTH, 0], // south east
-    [WEST, SOUTH, 0], // south west
-    [EAST, NORTH, 0], // north east
-    [WEST, NORTH, 0], // north west
-
-    [EAST, 0, DOWN], // down, east
-    [0, SOUTH, DOWN], // down, south
-    [WEST, 0, DOWN], // down, west
-    [0, NORTH, DOWN], // down, north
-
-    [EAST, SOUTH, DOWN], // down, south east
-    [WEST, SOUTH, DOWN], // down, south west
-    [EAST, NORTH, DOWN], // down, north east
-    [WEST, NORTH, DOWN], // down, north west
-];
-
 
 // Part 1
 // ======
 
 const part1 = input => {
-    let state = parse(input);
+    let state = parse3(input);
     console.log(JSON.stringify(state, null, 2))
-    print(state)
-    state = run(state, 6);
+    print3(state)
+    state = run3(state, 6);
     console.log(JSON.stringify(state, null, 2))
-    return count(state);
+    return count3(state);
 }
 
 // Part 2
 // ======
 
 const part2 = input => {
-    return input
+    let state = parse4(input);
+    console.log(JSON.stringify(state, null, 2))
+    print4(state)
+    state = run4(state, 6);
+    // console.log(JSON.stringify(state, null, 2))
+    return count4(state);
 }
 
-function run(initialState, cycles) {
+function run3(initialState, cycles) {
     let state = initialState;
 
     for (let c = 0; c < cycles; c++) {
@@ -73,20 +43,20 @@ function run(initialState, cycles) {
         for (let z = state.min; z < state.max; z++) {
             for (let y = state.min; y < state.max; y++) {
                 for (let x = state.min; x < state.max; x++) {
-                    let {active, inactive} = countNeighbours(state, x, y, z);
-                    if (get(state, x, y, z) === true) {
+                    let {active, inactive} = countNeighbours3(state, x, y, z);
+                    if (get3(state, x, y, z) === true) {
                         // currently active
                         if (active === 2 || active === 3) {
                             // remains active
                         } else {
                             // becomes inactive
-                            set(stateCopy, x, y, z, false);
+                            set3(stateCopy, x, y, z, false);
                         }
                     } else {
                         // currently inactive
                         if (active === 3) {
                             // becomes active
-                            set(stateCopy, x, y, z, true);
+                            set3(stateCopy, x, y, z, true);
                         }
                     }
                 }
@@ -94,19 +64,57 @@ function run(initialState, cycles) {
         }
 
         state = JSON.parse(JSON.stringify(stateCopy));
-        print(state);
+        print3(state);
     }
 
     return state;
 }
 
-function print(state) {
+function run4(initialState, cycles) {
+    let state = initialState;
+
+    for (let c = 0; c < cycles; c++) {
+        console.log("c=" + c);
+        let stateCopy = JSON.parse(JSON.stringify(state)); // write only to copy
+        for (let w = state.min; w < state.max; w++) {
+            for (let z = state.min; z < state.max; z++) {
+                for (let y = state.min; y < state.max; y++) {
+                    for (let x = state.min; x < state.max; x++) {
+                        let {active, inactive} = countNeighbours4(state, x, y, z, w);
+                        if (get4(state, x, y, z, w) === true) {
+                            // currently active
+                            if (active === 2 || active === 3) {
+                                // remains active
+                            } else {
+                                // becomes inactive
+                                set4(stateCopy, x, y, z, w, false);
+                            }
+                        } else {
+                            // currently inactive
+                            if (active === 3) {
+                                // becomes active
+                                set4(stateCopy, x, y, z, w, true);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        state = JSON.parse(JSON.stringify(stateCopy));
+        print4(state);
+    }
+
+    return state;
+}
+
+function print3(state) {
     for (let z = state.min; z < state.max; z++) {
         console.log("z=" + z);
         for (let y = state.min; y < state.max; y++) {
             let line = "";
             for (let x = state.min; x < state.max; x++) {
-                line += get(state, x, y, z) ? "#" : ".";
+                line += get3(state, x, y, z) ? "#" : ".";
             }
             console.log(line);
         }
@@ -114,13 +122,38 @@ function print(state) {
     }
 }
 
-function parse(input) {
+function print4(state) {
+    for (let w = state.min; w < state.max; w++) {
+        for (let z = state.min; z < state.max; z++) {
+            let sec = "";
+            let allEmpty = true;
+            for (let y = state.min; y < state.max; y++) {
+                let line = "";
+                for (let x = state.min; x < state.max; x++) {
+                    let a = get4(state, x, y, z, w);
+                    line += a ? "#" : ".";
+                    if (a) {
+                        allEmpty = false;
+                    }
+                }
+                sec += line + "\n";
+            }
+            if (allEmpty) {
+                // console.log("(empty)");
+            } else {
+                console.log("z=" + z + ", w=" + w);
+                console.log(sec);
+                console.log("");
+            }
+        }
+    }
+}
+
+function parse3(input) {
     const lines = util.getLines(input);
     let xSize = lines[0].length;
-    let ySize = lines.length;
-    let zSize = ySize;
 
-    let size = Math.ceil((xSize + ySize + zSize) / 3)
+    let size = Math.ceil(xSize)
     let mid = Math.ceil(size / 2);
 
     let data = {};
@@ -132,36 +165,51 @@ function parse(input) {
     for (let x = 0; x < size; x++) {
         for (let y = 0; y < size; y++) {
             for (let z = 0; z < size; z++) {
-                set(state, x - mid, y - mid, z - mid, false);
+                set3(state, x - mid, y - mid, z - mid, false);
             }
             if (typeof lines[y] !== "undefined") {
-                set(state, x - mid, y - mid, 0, lines[y][x] === "#");
+                set3(state, x - mid, y - mid, 0, lines[y][x] === "#");
             }
         }
     }
     return state;
 }
 
-function countNeighbours(state, x, y, z) {
-    let active = 0;
-    let inactive = 0;
-    for (let sh of shift) {
-        if (get(state, x + sh[0], y + sh[1], z + sh[2]) === true) {
-            active++;
-        } else {
-            inactive++;
+function parse4(input) {
+    const lines = util.getLines(input);
+
+    let size = Math.ceil(lines.length);
+    let mid = Math.ceil(size / 2);
+
+    let data = {};
+    let state = {
+        data: data,
+        min: -mid,
+        max: mid
+    };
+    for (let x = 0; x < size; x++) {
+        for (let y = 0; y < size; y++) {
+            for (let w = 0; w < size; w++) {
+                for (let z = 0; z < size; z++) {
+                    set4(state, x - mid, y - mid, z - mid, w - mid, false);
+                }
+            }
+            if (typeof lines[y] !== "undefined") {
+                set4(state, x - mid, y - mid, 0, 0, lines[y][x] === "#");
+            }
         }
     }
-    return {active, inactive};
+    return state;
 }
 
-function count(state) {
+function countNeighbours3(state, x, y, z) {
     let active = 0;
     let inactive = 0;
-    for (let z = state.min; z < state.max; z++) {
-        for (let y = state.min; y < state.max; y++) {
-            for (let x = state.min; x < state.max; x++) {
-                if (get(state, x, y, z) === true) {
+    for (let zs = -1; zs <= 1; zs++) {
+        for (let xs = -1; xs <= 1; xs++) {
+            for (let ys = -1; ys <= 1; ys++) {
+                if (zs === 0 && xs === 0 && ys === 0) continue;
+                if (get3(state, x + xs, y + ys, z + zs) === true) {
                     active++;
                 } else {
                     inactive++;
@@ -172,7 +220,63 @@ function count(state) {
     return {active, inactive};
 }
 
-function set(state, x, y, z, v) {
+function countNeighbours4(state, x, y, z, w) {
+    let active = 0;
+    let inactive = 0;
+    for (let ws = -1; ws <= 1; ws++) {
+        for (let zs = -1; zs <= 1; zs++) {
+            for (let xs = -1; xs <= 1; xs++) {
+                for (let ys = -1; ys <= 1; ys++) {
+                    if (zs === 0 && xs === 0 && ys === 0 && ws === 0) continue;
+                    if (get4(state, x + xs, y + ys, z + zs, w + ws) === true) {
+                        active++;
+                    } else {
+                        inactive++;
+                    }
+                }
+            }
+        }
+    }
+    return {active, inactive};
+}
+
+function count3(state) {
+    let active = 0;
+    let inactive = 0;
+    for (let z = state.min; z < state.max; z++) {
+        for (let y = state.min; y < state.max; y++) {
+            for (let x = state.min; x < state.max; x++) {
+                if (get3(state, x, y, z) === true) {
+                    active++;
+                } else {
+                    inactive++;
+                }
+            }
+        }
+    }
+    return {active, inactive};
+}
+
+function count4(state) {
+    let active = 0;
+    let inactive = 0;
+    for (let w = state.min; w < state.max; w++) {
+        for (let z = state.min; z < state.max; z++) {
+            for (let y = state.min; y < state.max; y++) {
+                for (let x = state.min; x < state.max; x++) {
+                    if (get4(state, x, y, z, w) === true) {
+                        active++;
+                    } else {
+                        inactive++;
+                    }
+                }
+            }
+        }
+    }
+    return {active, inactive};
+}
+
+function set3(state, x, y, z, v) {
     let absz = Math.abs(z);
     if (absz >= state.max || -absz <= state.min) {
         state.max = absz;
@@ -192,7 +296,7 @@ function set(state, x, y, z, v) {
     state.data[z] = zd;
 }
 
-function get(state, x, y, z) {
+function get3(state, x, y, z) {
     let absz = Math.abs(z);
     if (absz >= state.max || -absz <= state.min) {
         state.max = absz;
@@ -210,8 +314,52 @@ function get(state, x, y, z) {
     return yd[x];
 }
 
-function index(state, x, y, z) {
-    return (x + 1000) + state.width * ((y + 1000) + state.length * (z + 1000));
+
+function set4(state, x, y, z, w, v) {
+    let absw = Math.abs(w);
+    if (absw >= state.max || -absw <= state.min) {
+        state.max = absw;
+        state.min = -absw - 1;
+    }
+
+    let wd = state.data[w];
+    if (!wd) {
+        wd = {};
+    }
+    let zd = wd[z];
+    if (!zd) {
+        zd = {};
+    }
+    let yd = zd[y];
+    if (!yd) {
+        yd = {};
+    }
+    yd[x] = v;
+    zd[y] = yd;
+    wd[z] = zd;
+    state.data[w] = wd;
+}
+
+function get4(state, x, y, z, w) {
+    let absw = Math.abs(w);
+    if (absw >= state.max || -absw <= state.min) {
+        state.max = absw;
+        state.min = -absw - 1;
+    }
+
+    let wd = state.data[w];
+    if (!wd) {
+        return undefined;
+    }
+    let zd = wd[z];
+    if (!zd) {
+        return undefined;
+    }
+    let yd = zd[y];
+    if (!yd) {
+        return undefined;
+    }
+    return yd[x];
 }
 
 module.exports = {part1, part2}
