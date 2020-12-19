@@ -50,5 +50,12 @@ module.exports = {
     setChar: function (str, p, ch) {
         // https://stackoverflow.com/a/1431110
         return str.substring(0, p) + ch + str.substring(p + 1);
+    },
+    repeat: function (str, length) {
+        let s = "";
+        while (s.length < length) {
+            s += str;
+        }
+        return s;
     }
 }
